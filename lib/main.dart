@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 void main() => runApp(MyApp());
 
@@ -62,13 +63,25 @@ class AvailablePokemonTradesState extends State<AvailablePokemonTrades> {
   }
 
   Widget _buildRow(String pokemon) {
-    var _dittoImage = Image.network("https://i.imgur.com/cq4crmv.png");
+    Image _pokemonSprite = Image.network("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png");
     return ListTile(
-      leading: _dittoImage,
+      leading: _pokemonSprite,
       title: Text(
         pokemon.toUpperCase(),
         style: _biggerFont,
       ),
     );
+  }
+
+  String test()
+  {
+    var url = "https://pokeapi.co/api/v2/pokemon/ditto/";
+    http.post(url, body: {"name": "doodle", "color": "blue"})
+        .then((response) {
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+    });
+
+    http.read("http://example.com/foobar.txt").then(print);
   }
 }
