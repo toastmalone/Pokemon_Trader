@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() => runApp(MyApp());
 
@@ -27,7 +29,7 @@ class AvailablePokemonTradesState extends State<AvailablePokemonTrades> {
 
   @override
   Widget build(BuildContext context) {
-    _pokemonTrades.add("Ditto");
+    _pokemonTrades.add("charmander");
     print(_pokemonTrades.length);
 
     return Scaffold(
@@ -63,25 +65,37 @@ class AvailablePokemonTradesState extends State<AvailablePokemonTrades> {
   }
 
   Widget _buildRow(String pokemon) {
-    Image _pokemonSprite = Image.network("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png");
-    return ListTile(
-      leading: _pokemonSprite,
-      title: Text(
-        pokemon.toUpperCase(),
-        style: _biggerFont,
-      ),
+    return new FutureBuilder(
+      future: getPokemonSprite(pokemon),
+      initialData: "Doot...",
+        builder: (BuildContext context, AsyncSnapshot<String> text) {
+          var _spriteURL = text.data;
+          print(_spriteURL);
+          Image _pokemonSprite = Image.network(_spriteURL.toString());
+          return ListTile(
+            leading: _pokemonSprite,
+            title: Text(
+              pokemon.toUpperCase(),
+              style: _biggerFont,
+            ),
+          );
+        },
     );
   }
 
-  String test()
+  Future<String> getPokemonSprite(String pokemon) async
   {
-    var url = "https://pokeapi.co/api/v2/pokemon/ditto/";
-    http.post(url, body: {"name": "doodle", "color": "blue"})
+    var url = "https://pokeapi.co/api/v2/pokemon/" + pokemon + "/";
+    print("URL " + url);
+    var spriteURL;
+    await http.get(url)
         .then((response) {
-      print("Response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
+      Map<String, dynamic> _pokemonSprite = json.decode(response.body);
+      //print(_pokemonSprite['sprites']['front_default']);
+      spriteURL = _pokemonSprite['sprites']['front_default'];
+      print(spriteURL);
     });
-
-    http.read("http://example.com/foobar.txt").then(print);
+    print(spriteURL);
+    return spriteURL;
   }
 }
