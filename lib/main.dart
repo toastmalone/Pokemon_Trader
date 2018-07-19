@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io';
 
 void main() => runApp(MyApp());
 
@@ -13,17 +14,44 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.red,
       ),
-      home: FirstScreen (),
+      home: Home (),
     );
   }
 }
-class FirstScreen extends StatelessWidget{
+
+class Home extends StatefulWidget {
+  @override
+  State createState() => new FirstScreen();
+}
+class FirstScreen extends State<Home>{
+
+  TextEditingController userIDController = new TextEditingController();
+
+  File jsonFile;
+  Directory dir;
+  String fileName;
+  bool fileExists = false;
+
+  Map<String, String> fileContent;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+  File createFile(Map<String,String> content){
+
+  }
+
+  void writeToFile(String user) {
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Welcome to Pokemon Trader'),
       ),
+      //start of login tree
       body: Center(
         child: Container(
           margin: const EdgeInsets.all(10.0),
@@ -32,11 +60,11 @@ class FirstScreen extends StatelessWidget{
           height: 110.0,
           child: Center(
             child: Padding(
-
               padding: const EdgeInsets.symmetric(horizontal: 50.0),
               child: Column(
                 children: <Widget>[
                   new TextFormField(
+
                     decoration: null,
                   ),
                   Padding(
