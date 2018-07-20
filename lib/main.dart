@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 void main() => runApp(MyApp());
 
@@ -29,21 +30,50 @@ class FirstScreen extends State<Home>{
 
   File jsonFile;
   Directory dir;
-  String fileName;
+  String fileName = "JSONFile.json";
   bool fileExists = false;
 
-  Map<String, String> fileContent;
+  Map<String, dynamic> fileContent;
 
   @override
   void initState() {
     super.initState();
+    getApplicationDocumentsDirectory().then((Directory directory) {
+      dir = directory;
+      jsonFile = new File(dir.path + "/" + fileName);
+      fileExists = jsonFile.existsSync();
+      if (fileExists) this.setState(() => fileContent = JSON.decode(jsonFile.readAsStringSync()));
+    });
   }
-  File createFile(Map<String,String> content){
 
+  @override
+  void dispose() {
+    userIDController.dispose();
+    super.dispose();
   }
 
-  void writeToFile(String user) {
+  void createFile(Map<String, dynamic> content, Directory dir, String fileName) {
+    print("Creating file!");
+    File file = new File(dir.path + "/" + fileName);
+    file.createSync();
+    fileExists = true;
+    file.writeAsStringSync(json.encode(content));
+  }
 
+  void writeToFile(String key, String value) {
+    print("Writing to file!");
+    Map<String, dynamic> content = {key: value};
+    if (fileExists) {
+      print("File exists");
+      Map<String, dynamic> jsonFileContent = json.decode(jsonFile.readAsStringSync());
+      jsonFileContent.addAll(content);
+      jsonFile.writeAsStringSync(JSON.encode(jsonFileContent));
+    } else {
+      print("File does not exist!");
+      createFile(content, dir, fileName);
+    }
+    this.setState(() => fileContent = JSON.decode(jsonFile.readAsStringSync()));
+    print(fileContent);
   }
   @override
   Widget build(BuildContext context) {
@@ -53,35 +83,43 @@ class FirstScreen extends State<Home>{
       ),
       //start of login tree
       body: Center(
-        child: Container(
-          margin: const EdgeInsets.all(10.0),
-          color: const Color.fromRGBO(255, 104, 112, 10.0),
-          width: 300.0,
-          height: 110.0,
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50.0),
-              child: Column(
-                children: <Widget>[
-                  new TextFormField(
 
-                    decoration: null,
+        child: Column(
+          children: <Widget>[
+            new Text(fileContent.toString()),
+            new Container(
+              margin: const EdgeInsets.all(10.0),
+              color: const Color.fromRGBO(255, 104, 112, 10.0),
+              width: 300.0,
+              height: 110.0,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Column(
+                    children: <Widget>[
+                      new TextField(
+                        controller: userIDController,
+                        decoration: null,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: new RaisedButton(onPressed: () {
+
+                          writeToFile("user", userIDController.text);
+                         /* Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SecondScreen()),
+                          );*/
+                        },
+                          child: Text('Login'),
+                        ),
+                      )
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: new RaisedButton(onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SecondScreen()),
-                      );
-                    },
-                      child: Text('Login'),
-                    ),
-                  )
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
