@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "497319419321",
+    "firebase_url": "https://pokemon-trader-e4f7a.firebaseio.com",
+    "project_id": "pokemon-trader-e4f7a",
+    "storage_bucket": "pokemon-trader-e4f7a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497319419321:android:8a053bfb7fd3ba39",
+        "android_client_info": {
+          "package_name": "xyz.uraqt.pokemontraderflutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "497319419321-8i4660v63st2jvogef2r2ec850u6kcjn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4jOGRQkdn6psMXdwUOVOMWDlgfwvo3Wc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

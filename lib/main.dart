@@ -1,80 +1,48 @@
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:pokemon_trader_flutter/authentication.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return new MaterialApp(
       title: 'Pokemon GO Trader',
       theme: ThemeData(
         primaryColor: Colors.red,
       ),
-      home: Home (),
+      home: new Home(title: 'Pokemon Trader Login'),
     );
   }
 }
 
 class Home extends StatefulWidget {
+  Home({Key key, this.title}) : super(key: key);
+
+  final String title;
   @override
   State createState() => new FirstScreen();
 }
+
 class FirstScreen extends State<Home>{
 
+  Future<String> _message = new Future<String>.value('');
+  TextEditingController _smsCodeController = new TextEditingController();
   TextEditingController userIDController = new TextEditingController();
+  String verificationId;
 
-  File jsonFile;
-  Directory dir;
-  String fileName = "JSONFile.json";
-  bool fileExists = false;
+  final String testSmsCode = '888888';
+  final String testPhoneNumber = '+1 775-683-7319';
 
-  Map<String, dynamic> fileContent;
 
-  @override
-  void initState() {
-    super.initState();
-    getApplicationDocumentsDirectory().then((Directory directory) {
-      dir = directory;
-      jsonFile = new File(dir.path + "/" + fileName);
-      fileExists = jsonFile.existsSync();
-      if (fileExists) this.setState(() => fileContent = JSON.decode(jsonFile.readAsStringSync()));
-    });
-  }
-
-  @override
-  void dispose() {
-    userIDController.dispose();
-    super.dispose();
-  }
-
-  void createFile(Map<String, dynamic> content, Directory dir, String fileName) {
-    print("Creating file!");
-    File file = new File(dir.path + "/" + fileName);
-    file.createSync();
-    fileExists = true;
-    file.writeAsStringSync(json.encode(content));
-  }
-
-  void writeToFile(String key, String value) {
-    print("Writing to file!");
-    Map<String, dynamic> content = {key: value};
-    if (fileExists) {
-      print("File exists");
-      Map<String, dynamic> jsonFileContent = json.decode(jsonFile.readAsStringSync());
-      jsonFileContent.addAll(content);
-      jsonFile.writeAsStringSync(JSON.encode(jsonFileContent));
-    } else {
-      print("File does not exist!");
-      createFile(content, dir, fileName);
-    }
-    this.setState(() => fileContent = JSON.decode(jsonFile.readAsStringSync()));
-    print(fileContent);
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,37 +54,38 @@ class FirstScreen extends State<Home>{
 
         child: Column(
           children: <Widget>[
-            new Text(fileContent.toString()),
             new Container(
               margin: const EdgeInsets.all(10.0),
               color: const Color.fromRGBO(255, 104, 112, 10.0),
               width: 300.0,
               height: 110.0,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                  child: Column(
-                    children: <Widget>[
-                      new TextField(
-                        controller: userIDController,
-                        decoration: null,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: new RaisedButton(onPressed: () {
-
-                          writeToFile("user", userIDController.text);
-                         /* Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => SecondScreen()),
-                          );*/
-                        },
-                          child: Text('Login'),
-                        ),
-                      )
-                    ],
+              child: Column(
+                children: <Widget>[
+                  new TextField(
+                    controller: userIDController,
+                    decoration: null,
                   ),
-                ),
+                  new RaisedButton(onPressed: () async{
+
+                        final FirebaseUser currentUser =  await googleSignIn();
+                        print(currentUser.displayName);
+                        print("done");
+
+                   /* Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SecondScreen()),
+                    );*/
+                  },
+                    child: Text('Login'),
+                  ),
+                  new FutureBuilder<String>(
+                  future: _message,
+                  builder: (_, AsyncSnapshot<String> snapshot) {
+                    return new Text(snapshot.data ?? '',
+                        style: const TextStyle(
+                            color: const Color.fromARGB(255, 0, 155, 0)));
+                  }),
+                ],
               ),
             ),
           ],
@@ -143,7 +112,6 @@ class AvailablePokemonTrades extends StatefulWidget {
   @override
   createState() => AvailablePokemonTradesState();
 }
-
 class AvailablePokemonTradesState extends State<AvailablePokemonTrades> {
   final _biggerFont = const TextStyle(fontSize: 18.0);
   final _pokemonTrades = <String>[];
