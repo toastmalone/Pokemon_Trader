@@ -35,13 +35,8 @@ class Home extends StatefulWidget {
 class FirstScreen extends State<Home>{
 
   Future<String> _message = new Future<String>.value('');
-  TextEditingController _smsCodeController = new TextEditingController();
   TextEditingController userIDController = new TextEditingController();
   String verificationId;
-
-  final String testSmsCode = '888888';
-  final String testPhoneNumber = '+1 775-683-7319';
-
 
   @override
   Widget build(BuildContext context) {
@@ -52,44 +47,27 @@ class FirstScreen extends State<Home>{
       //start of login tree
       body: Center(
 
-        child: Column(
-          children: <Widget>[
-            new Container(
+        child: new Container(
               margin: const EdgeInsets.all(10.0),
               color: const Color.fromRGBO(255, 104, 112, 10.0),
               width: 300.0,
               height: 110.0,
-              child: Column(
-                children: <Widget>[
-                  new TextField(
-                    controller: userIDController,
-                    decoration: null,
-                  ),
-                  new RaisedButton(onPressed: () async{
+              child: Center(
+                child:  RaisedButton(onPressed: () async{
 
-                        final FirebaseUser currentUser =  await googleSignIn();
-                        print(currentUser.displayName);
-                        print("done");
-
-                   /* Navigator.push(
+                  final FirebaseUser currentUser =  await googleSignIn();
+                  print(currentUser.displayName);
+                  print("done");
+                    if(currentUser.displayName != null){
+                   Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => SecondScreen()),
-                    );*/
+                    );}
                   },
-                    child: Text('Login'),
-                  ),
-                  new FutureBuilder<String>(
-                  future: _message,
-                  builder: (_, AsyncSnapshot<String> snapshot) {
-                    return new Text(snapshot.data ?? '',
-                        style: const TextStyle(
-                            color: const Color.fromARGB(255, 0, 155, 0)));
-                  }),
-                ],
+                  child: Text('Login'),
+                ),
               ),
             ),
-          ],
-        ),
       ),
     );
   }
