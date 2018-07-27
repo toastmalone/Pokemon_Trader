@@ -16,12 +16,13 @@ void main() {
     theme: ThemeData(
       primaryColor: Colors.red,
     ),
-    initialRoute: '/',
+    initialRoute: '/login',
     routes: {
-      '/': (context) => LoginScreen(),
-      '/forum': (context) => AvailablePokemonTrades(),
-      '/post': (context) => CreatePost(),
-      '/manage': (context) => ManagePosts(),
+      '/': (context) => AvailablePokemonTrades(),
+      '/Login': (context) => LoginScreen(),
+      '/Post': (context) => CreatePost(),
+      '/Manage': (context) => ManagePosts(),
+      '/Create': (context) => CreatePost(),
     },
   ));
 }
@@ -60,10 +61,8 @@ class LoginScreenState extends State<LoginScreen>{
                   cUser = currentUser.displayName;
                   print("done");
                     if(currentUser.displayName != null){
-                   Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AvailablePokemonTrades()),
-                    );}
+                   Navigator.pushNamed(context, '/');
+                    }
                   },
                   child: Text('Login'),
                 ),
@@ -87,18 +86,7 @@ class AvailablePokemonTradesState extends State<AvailablePokemonTrades> {
     _pokemonTrades.add("charmander");
     print(_pokemonTrades.length);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Pokemon GO Trader"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.list),
-            onPressed: null,
-          ),
-        ],
-      ),
-      body: _buildAvailablePokemon(),
-    );
+    return appBarTemplate(_buildAvailablePokemon(), context);
   }
 
   Widget _buildAvailablePokemon() {
@@ -177,3 +165,46 @@ class ManagePostsState extends State <ManagePosts>{
     return new Text("post manager");
   }
 }
+
+Scaffold appBarTemplate (Widget _body, BuildContext _context){
+  Choice _selectedChoice = choices[0];
+
+  void _select (Choice choice) {
+    _selectedChoice = choice;
+    Navigator.pushNamed(_context, '/' + _selectedChoice.title);
+  }
+  return Scaffold(
+    appBar: AppBar(
+      title: Text("Pokemon GO Trader"),
+      actions: <Widget>[
+        PopupMenuButton<Choice>(
+          onSelected: _select,
+          itemBuilder: (BuildContext context) {
+            return choices.map((Choice choice) {
+              return PopupMenuItem<Choice>(
+                value: choice,
+                child: Text(choice.title),
+              );
+            }).toList();
+          },
+        ),
+      ],
+    ),
+    body: _body,
+  );
+}
+
+class Choice {
+  const Choice({this.title, this.icon});
+
+  final String title;
+  final IconData icon;
+}
+
+const List<Choice> choices = const <Choice> [
+  const Choice(title: 'Forum', icon: IconData(0xe875, fontFamily: 'MaterialIcons')),
+  const Choice(title: 'Create', icon: IconData(0xe616, fontFamily: 'MaterialIcons')),
+  const Choice(title: 'Manage', icon: IconData(0xe616, fontFamily: 'MaterialIcons')),
+  const Choice(title: 'Message', icon: IconData(0xe0c9, fontFamily: 'MaterialIcons')),
+  const Choice(title: 'SignOut', icon: IconData(0xe879, fontFamily: 'MaterialIcons')),
+];
