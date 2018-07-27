@@ -8,33 +8,34 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pokemon_trader_flutter/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+String cUser;
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-      title: 'Pokemon GO Trader',
-      theme: ThemeData(
-        primaryColor: Colors.red,
-      ),
-      home: new Home(title: 'Pokemon Trader Login'),
-    );
-  }
+void main() {
+  runApp(MaterialApp(
+    title: 'Pokemon GO Trader',
+    theme: ThemeData(
+      primaryColor: Colors.red,
+    ),
+    initialRoute: '/',
+    routes: {
+      '/': (context) => LoginScreen(),
+      '/forum': (context) => AvailablePokemonTrades(),
+      '/post': (context) => CreatePost(),
+      '/manage': (context) => ManagePosts(),
+    },
+  ));
 }
 
-class Home extends StatefulWidget {
-  Home({Key key, this.title}) : super(key: key);
+class LoginScreen extends StatefulWidget {
+  LoginScreen({Key key, this.title}) : super(key: key);
 
   final String title;
   @override
-  State createState() => new FirstScreen();
+  State createState() => new LoginScreenState();
 }
+class LoginScreenState extends State<LoginScreen>{
 
-class FirstScreen extends State<Home>{
 
-  Future<String> _message = new Future<String>.value('');
   TextEditingController userIDController = new TextEditingController();
   String verificationId;
 
@@ -56,12 +57,12 @@ class FirstScreen extends State<Home>{
                 child:  RaisedButton(onPressed: () async{
 
                   final FirebaseUser currentUser =  await googleSignIn();
-                  print(currentUser.displayName);
+                  cUser = currentUser.displayName;
                   print("done");
                     if(currentUser.displayName != null){
                    Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SecondScreen()),
+                      MaterialPageRoute(builder: (context) => AvailablePokemonTrades()),
                     );}
                   },
                   child: Text('Login'),
@@ -71,21 +72,8 @@ class FirstScreen extends State<Home>{
       ),
     );
   }
-
-
 }
-class SecondScreen extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Pokemon GO Trader',
-      theme: ThemeData(
-        primaryColor: Colors.red,
-      ),
-      home: AvailablePokemonTrades(),
-    );
-  }
-}
+
 class AvailablePokemonTrades extends StatefulWidget {
   @override
   createState() => AvailablePokemonTradesState();
@@ -164,5 +152,28 @@ class AvailablePokemonTradesState extends State<AvailablePokemonTrades> {
     });
     print(spriteURL);
     return spriteURL;
+  }
+}
+
+class CreatePost extends StatefulWidget {
+  @override
+  State createState() => new CreatePostState();
+}
+class CreatePostState extends State<CreatePost> {
+  @override
+  Widget build(BuildContext context){
+    return new Text("post temp");
+  }
+
+}
+
+class ManagePosts extends StatefulWidget{
+  @override
+  State createState() => new ManagePostsState();
+}
+class ManagePostsState extends State <ManagePosts>{
+  @override
+  Widget build(BuildContext context){
+    return new Text("post manager");
   }
 }
