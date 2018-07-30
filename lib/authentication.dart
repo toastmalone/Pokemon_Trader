@@ -9,32 +9,6 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn _googleSignIn = new GoogleSignIn();
 
 
-
-/*
-  Future<String> _testSignInAnonymously() async {
-    final FirebaseUser user = await _auth.signInAnonymously();
-    assert(user != null);
-    assert(user.isAnonymous);
-    assert(!user.isEmailVerified);
-    assert(await user.getIdToken() != null);
-    if (Platform.isIOS) {
-      assert(user.providerData.isEmpty);
-    }
-    else if (Platform.isAndroid) {
-      assert(user.providerData.length == 1);
-      assert(user.providerData[0].uid != null);
-      assert(user.providerData[0].displayName = null);
-      assert(user.providerData[0].photoUrl == null);
-      assert(user.providerData[0].email = null);
-    }
-
-    final FirebaseUser currentUser = await _auth.currentUser();
-    assert(user.uid == currentUser.uid);
-
-    return 'signInAnonymously succeeded: $user';
-  }
-  */
-
   Future<FirebaseUser> googleSignIn() async{
       GoogleSignInAccount currentUser = _googleSignIn.currentUser;
       print("SIGNED IN");
@@ -80,5 +54,9 @@ final GoogleSignIn _googleSignIn = new GoogleSignIn();
       print("signInWithGoogle succeeded: ");
       return user;
 
+  }
+
+  void signOut (){
+      FirebaseAuth.instance.signOut();
   }
 

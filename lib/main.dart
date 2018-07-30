@@ -16,13 +16,14 @@ void main() {
     theme: ThemeData(
       primaryColor: Colors.red,
     ),
-    initialRoute: '/login',
+    initialRoute: '/',
     routes: {
-      '/': (context) => AvailablePokemonTrades(),
-      '/Login': (context) => LoginScreen(),
+      '/Forum': (context) => AvailablePokemonTrades(),
+      '/': (context) => LoginScreen(),
       '/Post': (context) => CreatePost(),
       '/Manage': (context) => ManagePosts(),
       '/Create': (context) => CreatePost(),
+      '/Message': (context) => Message(),
     },
   ));
 }
@@ -61,7 +62,7 @@ class LoginScreenState extends State<LoginScreen>{
                   cUser = currentUser.displayName;
                   print("done");
                     if(currentUser.displayName != null){
-                   Navigator.pushNamed(context, '/');
+                   Navigator.pushNamed(context, '/Forum');
                     }
                   },
                   child: Text('Login'),
@@ -148,9 +149,33 @@ class CreatePost extends StatefulWidget {
   State createState() => new CreatePostState();
 }
 class CreatePostState extends State<CreatePost> {
+  final _fontSize = TextStyle(fontSize: 18.0);
+  final TextEditingController _toTrade = new TextEditingController();
+
   @override
   Widget build(BuildContext context){
-    return new Text("post temp");
+    return appBarTemplate(_newPost(), context);
+  }
+
+  Widget _newPost (){
+    return new Column(
+      children: <Widget>[
+        new Container(
+          color: Color.fromRGBO(20, 50, 255, 100.0),
+          width: 300.0,
+          height: 50.0,
+          child: TextField(
+            controller: _toTrade,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: 'Looking for...',
+            ),
+            style: _fontSize,
+          )
+        ),
+        new Container()
+      ],
+    );
   }
 
 }
@@ -166,12 +191,41 @@ class ManagePostsState extends State <ManagePosts>{
   }
 }
 
+class Message extends StatefulWidget{
+  @override
+  State createState() => new MessageState();
+}
+class MessageState extends State<Message>{
+  @override
+  Widget build(BuildContext context){
+    return new Text('Message Test');
+  }
+}
+
+//appbar used in most pages of the app
 Scaffold appBarTemplate (Widget _body, BuildContext _context){
+
+  //Constant list for appbar dropdown
+  const List<Choice> choices = const <Choice> [
+    const Choice(title: 'Forum', icon: IconData(0xe875, fontFamily: 'MaterialIcons')),
+    const Choice(title: 'Create', icon: IconData(0xe616, fontFamily: 'MaterialIcons')),
+    const Choice(title: 'Manage', icon: IconData(0xe616, fontFamily: 'MaterialIcons')),
+    const Choice(title: 'Message', icon: IconData(0xe0c9, fontFamily: 'MaterialIcons')),
+    const Choice(title: 'Sign Out', icon: IconData(0xe879, fontFamily: 'MaterialIcons')),
+  ];
+
+  //holds the selected choice
   Choice _selectedChoice = choices[0];
 
   void _select (Choice choice) {
     _selectedChoice = choice;
-    Navigator.pushNamed(_context, '/' + _selectedChoice.title);
+    if(_selectedChoice.title == "Sign Out"){
+      signOut();
+      Navigator.pushNamed(_context, '/');
+    }
+     else {
+      Navigator.pushNamed(_context, '/' + _selectedChoice.title);
+    }
   }
   return Scaffold(
     appBar: AppBar(
@@ -194,17 +248,10 @@ Scaffold appBarTemplate (Widget _body, BuildContext _context){
   );
 }
 
+//Choice class used for appbar drop down menu
 class Choice {
   const Choice({this.title, this.icon});
 
   final String title;
   final IconData icon;
 }
-
-const List<Choice> choices = const <Choice> [
-  const Choice(title: 'Forum', icon: IconData(0xe875, fontFamily: 'MaterialIcons')),
-  const Choice(title: 'Create', icon: IconData(0xe616, fontFamily: 'MaterialIcons')),
-  const Choice(title: 'Manage', icon: IconData(0xe616, fontFamily: 'MaterialIcons')),
-  const Choice(title: 'Message', icon: IconData(0xe0c9, fontFamily: 'MaterialIcons')),
-  const Choice(title: 'SignOut', icon: IconData(0xe879, fontFamily: 'MaterialIcons')),
-];
